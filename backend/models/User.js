@@ -13,6 +13,10 @@ const UserSchema = new mongoose.Schema({
     password:{
         type:String,
         required:true
+    },
+    avatar_path:{
+        type:String,
+        default: '/avatar/default-avatar.jpg'
     }
 })
 

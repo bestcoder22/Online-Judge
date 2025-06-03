@@ -32,12 +32,12 @@ export const signup = async(req,res) => {
     const newUser = new User({
         username: req.body.username,
         email: req.body.email,
-        password : req.body.password
+        password : req.body.password,
     })
 
     await newUser.save();
 
-    return res.status(201).json({success:true, message: "User registered successfully" });
+    return res.status(200).json({success:true, message: "User registered successfully" });
 }
 
 export const logout = async (req,res) => {
@@ -54,4 +54,26 @@ export const me = async (req,res) => {
         id : req.userId,
         role : req.userRole
     })
+}
+
+export const get_user = async (req,res) => {
+    const {userid} = req.body;
+    const user = await User.findOne({_id:userid});
+    return res.json({
+        success:true,
+        user
+    })
+}
+
+export const update_avatar = async (req,res) => {
+    const userId = req.body.userId;
+    const avatarfile = req.file.filename;
+    const user = await User.findOne({_id:userId});
+    user.avatar_path=`/avatar/${avatarfile}`;
+    await user.save();
+    res.json({
+        success:true,
+        message:"Avatar Updated Successfully!"
+    })
+
 }

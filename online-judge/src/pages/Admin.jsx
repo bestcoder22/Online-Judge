@@ -4,12 +4,12 @@ import { AuthContext } from "../context/AuthContext"
 import { Link } from "react-router-dom";
 
 const Admin = () => {
-    const {isAdmin,isLoggedin} = useContext(AuthContext);
+    const {isAdmin,userinfo} = useContext(AuthContext);
     return(
         <div>
             <Navbar />
             <h2 className="flex justify-center m-5 font-bold">Welcome to Admin Page!!</h2>
-            {isLoggedin ? 
+            {userinfo ? 
             <div>
                 {isAdmin!=true ? 
                 <div className="flex flex-col m-5">

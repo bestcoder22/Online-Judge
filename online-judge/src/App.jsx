@@ -9,6 +9,7 @@ import Admin from './pages/Admin';
 import Addproblem from './pages/Addproblem';
 import Updateproblem from './pages/Updateproblem';
 import Problempage from './pages/Problempage';
+import Profile from './pages/Profile';
 
 
 const App = () =>{
@@ -18,6 +19,7 @@ const App = () =>{
                 <Route path='/' element={<Home />} />
                 <Route path='/login' element={<Login />} />
                 <Route path='/signup' element={<Signup />} />
+                <Route path='/profile' element={< Profile/>} />
                 <Route path='/problems' element={<Problems />} />
                 <Route path='/problems/:problemid' element={<Problempage />} />
                 <Route path='/leaderboard' element={<Leaderboard />} />

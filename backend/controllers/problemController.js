@@ -14,7 +14,6 @@ export const getproblems = async (req,res) => {
 
 export const deleteproblem = async (req,res) => {
     const { problemid }= req.body;
-    console.log(problemid);
     await Problem.findOneAndDelete({problemid:problemid});
     
     await axios.post("http://localhost:5000/admin/deletetestcases",{ problemid });
@@ -36,4 +35,13 @@ export const update_problem = async (req,res) =>{
         success:true,
         message:"Problem Info Updated Successfully!!"
     })
+}
+
+export const get_problem = async (req,res) => {
+    const {problemid} = req.body;
+    const problem = await Problem.findOne({problemid: problemid});
+    res.json({
+        success:true,
+        problem:problem
+    });
 }

@@ -14,6 +14,7 @@ if (!fs.existsSync(outputPath)) {
 
 const TIME_LIMIT_MS = 2000;
 
+
 function runWithInput(exePath, input) {
   return new Promise((resolve, reject) => {
     const runProcess = spawn(exePath);
@@ -92,11 +93,21 @@ export const executeCpp = async (filePath, inputArray = []) => {
   const exeName = `${jobId}.exe`;
   const exePath = path.join(outputPath, exeName);
 
+  const cleanup_files = () => {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+    if (fs.existsSync(exePath)) {
+      fs.unlinkSync(exePath);
+    }
+  };
+
   return new Promise((resolve, reject) => {
     const compileCmd = `g++ "${filePath}" -o "${exePath}"`;
 
     exec(compileCmd, async (compileErr, compileStdout, compileStderr) => {
       if (compileErr || compileStderr) {
+        cleanup_files();
         return reject({
           step: 'compile',
           errorType: 'Compilation Error',
@@ -111,9 +122,10 @@ export const executeCpp = async (filePath, inputArray = []) => {
           const output = await runWithInput(exePath, testCase.data);
           results.push({ name: testCase.name, output });
         }
-
+        cleanup_files();
         return resolve(results);
       } catch (err) {
+        cleanup_files();
         return reject(err);
       }
     });

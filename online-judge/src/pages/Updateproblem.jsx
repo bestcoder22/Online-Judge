@@ -15,6 +15,37 @@ const Updateproblem = () => {
     getproblems();
   }, []);
 
+  const addSamplePair = () => {
+    if (selectedProblem.sampleCases.length >= 5) return;
+    const newPair = {
+      id: Date.now() + Math.random(), // simple unique key
+      sampleInput: '',
+      sampleOutput: '',
+    };
+    setSelectedProblem(prev => ({
+      ...prev,
+      sampleCases: [...prev.sampleCases, newPair],
+      }));
+    };
+
+  const removeSampleCases = (id) => {
+    setSelectedProblem((prev) => ({
+      ...prev,
+      sampleCases: prev.sampleCases.filter((pair) => pair.id !== id),
+      }));
+    };
+
+    const onSampleChange = (id, field, value) => {
+      setSelectedProblem((prev) => ({
+        ...prev,
+        sampleCases:prev.sampleCases.map((pair) =>
+          pair.id === id ? { ...pair, [field]: value } : pair
+        )
+      })
+      
+    );
+  };
+
   const handledelete = async (problemid) => {
     const response = await axios.post(
       "http://localhost:5000/admin/deleteproblem",
@@ -31,6 +62,7 @@ const Updateproblem = () => {
     setSelectedProblem(problem);
     const response = await axios.post("http://localhost:5000/admin/gettestcase", problem);
     setselectedTestcase(response.data.testcase); 
+    
   };
 
   const handleChange = (e) => {
@@ -59,6 +91,27 @@ const Updateproblem = () => {
   };
 
   const handleUpdate = async () => {
+    if(selectedProblem.title===""){
+      alert("Enter Title");
+      return;
+    }
+    if(selectedProblem.description===""){
+      alert("Enter Description");
+      return;
+    }
+
+    if(selectedProblem.constraints===""){
+      alert("Add Constraints");
+      return;
+    }
+
+    for(let i=0 ; i<selectedProblem.sampleCases.length ; i++){
+      const pair = selectedProblem.sampleCases[i];
+      if (pair.sampleInput === '' || pair.sampleOutput === '') {
+        alert(`Enter Sample I/O for sample ${i + 1}`);
+        return ;
+      }
+    }
     // send updated details and files using axios here
     if(selectedProblem===null && selectedTestcase===null){
         alert("You haven't change anything for update!!")
@@ -187,6 +240,75 @@ const Updateproblem = () => {
                     className="w-full px-4 py-2 border rounded-lg resize-none max-h-40 overflow-y-auto"
                     rows={5}
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    Constraints
+                  </label>
+                  <textarea
+                    name="constraints"
+                    value={selectedProblem.constraints}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border rounded-lg resize-none max-h-40 overflow-y-auto"
+                    rows={5}
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={addSamplePair}
+                  disabled={selectedProblem.sampleCases.length >= 5}
+                  className={`inline-flex items-center justify-center rounded-md bg-cyan-500 px-4 py-2 text-sm font-medium text-white hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-indigo-500
+                  ${selectedProblem.sampleCases.length >= 5 ? "opacity-50 cursor-not-allowed" : ""}
+                  `}
+                >
+                  Add Sample I/O ({selectedProblem.sampleCases.length}/5)
+                </button>
+
+                <div className="mt-4 space-y-6">
+                  {selectedProblem.sampleCases.map((pair, idx) => (
+                    <div
+                      key={pair.id}
+                      className="relative bg-white border border-gray-200 rounded-lg p-4"
+                    >
+                      {/* Remove (×) button in top-right */}
+                      <button
+                        type="button"
+                        onClick={() => removeSampleCases(pair.id)}
+                        className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+                      >
+                        ×
+                      </button>
+
+                      {/* Optional: Label “Sample Pair #” */}
+                      <h3 className="text-sm font-medium text-gray-700 mb-2">
+                        Sample #{idx + 1}
+                      </h3>
+
+                      {/* Sample Input textarea */}
+                      <textarea
+                        name={`sampleInput-${pair.id}`}
+                        value={pair.sampleInput}
+                        placeholder="Enter Sample Input"
+                        className="block w-full rounded-md bg-gray-50 px-3 py-1.5 mb-4 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        onChange={(e) =>
+                          onSampleChange(pair.id, "sampleInput", e.target.value)
+                        }
+                      />
+
+                      {/* Sample Output textarea */}
+                      <textarea
+                        name={`sampleOutput-${pair.id}`}
+                        value={pair.sampleOutput}
+                        placeholder="Enter Sample Output"
+                        className="block w-full rounded-md bg-gray-50 px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        onChange={(e) =>
+                          onSampleChange(pair.id, "sampleOutput", e.target.value)
+                        }
+                      />
+                    </div>
+                  ))}
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">

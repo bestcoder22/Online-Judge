@@ -15,6 +15,7 @@ const Signup = () => {
         const response = await axios.post('http://localhost:5000/signup' , user);
         if(response.data.success){
         alert(response.data.message);
+        window.location.replace("/login");
         }
         else alert(response.data.errors);
     }
