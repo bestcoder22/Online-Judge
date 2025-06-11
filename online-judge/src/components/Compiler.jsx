@@ -1,16 +1,22 @@
 import Editor from '@monaco-editor/react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
 const Compiler = ({ problemid }) => {
+  const {userinfo} = useContext(AuthContext);
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('cpp');
-
   const [responseData, setResponseData] = useState(null);
   const [errorData, setErrorData] = useState(null);
   const [selectedTestcase, setSelectedTestcase] = useState(null);
   const [problem, setProblem] = useState(null);
   const [isSampleRun, setIsSampleRun] = useState(false);
+  const [isCustomOpen, setIsCustomOpen] = useState(false);
+  const [customInput, setCustomInput] = useState('');
+  const [customOutput, setCustomOutput] = useState('');
+  const [customError, setCustomError] = useState(null);
+
 
   const defaultCodes = {
     cpp: `#include <iostream>
@@ -26,6 +32,8 @@ int main() {
     }
 }`,
   };
+
+
 
   useEffect(() => {
     const getProblem = async () => {
@@ -140,6 +148,37 @@ int main() {
     }
   };
 
+  const open_custom_testcase = async () => {
+    setIsCustomOpen(true);
+  }
+
+  const run_custom_code = async () => {
+    setCustomOutput("");
+    setCustomError(null);
+
+    if (!customInput.trim()) {
+      alert("Enter custom input");
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://localhost:5000/run", {
+        problemid,
+        code,
+        language,
+        inputArray: [{ name: "Custom", data: customInput }],
+      });
+
+      if (res.data.status === "success") {
+        setCustomOutput(res.data.output?.[0]?.output || "");
+      } else {
+        setCustomError(res.data.message || "Unknown error");
+      }
+    } catch (err) {
+      setCustomError(err.response?.data?.message || err.message);
+    }
+  };
+
   const normalize = (str) => str.replace(/\r\n/g, '\n').trim();
 
   let testcaseSummaries = [];
@@ -182,11 +221,95 @@ int main() {
     testcaseSummaries.length > 0 &&
     testcaseSummaries.every((tc) => tc.isCorrect);
 
+  useEffect(()=>{
+      const save_submission = async () => {
+      if(errorData && !isSampleRun){
+        const data = {
+          userid:userinfo._id,
+          problemid:problemid,
+          code:code,
+          status:errorData.errorType
+        }
+        await axios.post("http://localhost:5000/submission",data);
+      }
+      if(responseData && !isSampleRun){
+        
+        if(allPassed){
+            const data = {
+            userid:userinfo._id,
+            problemid:problemid,
+            code:code,
+            status:"Accepted"
+          }
+
+          await axios.post("http://localhost:5000/submission",data);
+        }
+        else{
+          const data = {
+            userid:userinfo._id,
+            problemid:problemid,
+            code:code,
+            status:"Wrong Answer"
+          }
+          await axios.post("http://localhost:5000/submission",data);
+        }
+      }
+    }
+    save_submission();
+  },[errorData,responseData])
+
   return (
     <div className="flex h-screen bg-gray-100">
       {/* LEFT COLUMN: Problem or Results/Error */}
       <div className="w-1/2 p-6 flex flex-col">
-        {(errorData || responseData) ? (
+        {isCustomOpen ? (
+          <div className="relative bg-white rounded-2xl shadow-lg p-6 flex-1 overflow-y-auto">
+            {/* × close */}
+            <button
+              onClick={() => {
+                setIsCustomOpen(false);
+                setCustomInput("");
+                setCustomOutput("");
+                setCustomError(null);
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              ×
+            </button>
+
+            {/* Heading */}
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Custom Testcase Run
+            </h2>
+
+            {/* Input box */}
+            <div className="mb-4">
+              <h3 className="text-sm font-medium text-gray-600">Input:</h3>
+              <textarea
+                rows={6}
+                value={customInput}
+                onChange={(e) => setCustomInput(e.target.value)}
+                className="w-full mt-1 p-2 border border-gray-300 rounded-md font-mono text-sm"
+              />
+            </div>
+
+            {/* Output / Error */}
+            <div className="mb-6">
+              <h3 className="text-sm font-medium text-gray-600">Output:</h3>
+              <pre className="w-full mt-1 p-2 border border-gray-300 rounded-md font-mono text-sm min-h-[100px]">
+                {customError ? `Error: ${customError}` : customOutput}
+              </pre>
+            </div>
+
+            {/* Run button */}
+            <button
+              onClick={run_custom_code}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow"
+            >
+              Run Custom Test
+            </button>
+          </div>
+        ) : errorData || responseData ? (
           <div className="relative bg-white rounded-2xl shadow-lg p-6 flex-1 overflow-y-auto">
             <button
               onClick={closePanel}
@@ -240,15 +363,15 @@ int main() {
                           w-full text-left px-4 py-2 rounded-lg font-medium font-sans
                           ${
                             tc.isCorrect
-                              ? 'bg-green-100 text-green-800 border border-green-300'
-                              : 'bg-red-100 text-red-800 border border-red-300'
+                              ? "bg-green-100 text-green-800 border border-green-300"
+                              : "bg-red-100 text-red-800 border border-red-300"
                           }
                           hover:opacity-90
                         `}
                       >
-                        <span className="text-base">{tc.name}</span>{' '}
+                        <span className="text-base">{tc.name}</span>{" "}
                         <span className="ml-2">
-                          {tc.isCorrect ? '✅' : '❌'}
+                          {tc.isCorrect ? "✅" : "❌"}
                         </span>
                       </button>
 
@@ -259,7 +382,7 @@ int main() {
                               Input:
                             </h3>
                             <pre className="text-sm text-gray-800 whitespace-pre-wrap mt-1 font-mono">
-                              {tc.inputRaw.replace(/\r\n/g, '\n')}
+                              {tc.inputRaw.replace(/\r\n/g, "\n")}
                             </pre>
                           </div>
 
@@ -268,7 +391,7 @@ int main() {
                               Your Output:
                             </h3>
                             <pre className="text-sm text-gray-800 whitespace-pre-wrap mt-1 font-mono">
-                              {tc.userRaw.replace(/\r\n/g, '\n')}
+                              {tc.userRaw.replace(/\r\n/g, "\n")}
                             </pre>
                           </div>
 
@@ -277,7 +400,7 @@ int main() {
                               Expected Output:
                             </h3>
                             <pre className="text-sm text-gray-800 whitespace-pre-wrap mt-1 font-mono">
-                              {tc.expectedRaw.replace(/\r\n/g, '\n')}
+                              {tc.expectedRaw.replace(/\r\n/g, "\n")}
                             </pre>
                           </div>
                         </div>
@@ -369,20 +492,43 @@ int main() {
       {/* RIGHT COLUMN: Editor + Submit */}
       <div className="w-1/2 p-6 flex flex-col items-center overflow-hidden">
         <header className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Web IDE with Auto-Fix</h1>
+          <h1 className="text-3xl font-bold text-gray-800">
+            Web IDE with Auto-Fix
+          </h1>
         </header>
+        <div className="w-full flex mb-5 relative">
+          {/* Flex container inside right column */}
+          <div className="w-full flex justify-center relative">
+            {/* Centered Select */}
+            <div className="absolute left-1/2 -translate-x-1/2">
+              <select
+                name="language"
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="px-4 py-2 border rounded-lg bg-white cursor-pointer w-48 text-gray-700"
+              >
+                <option value="cpp">C++</option>
+                <option value="js">JavaScript</option>
+                <option value="py">Python</option>
+                <option value="java">Java</option>
+              </select>
+            </div>
 
-        <select
-          name="language"
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-          className="px-4 py-2 border rounded-lg bg-white mb-5 cursor-pointer w-48 text-gray-700"
-        >
-          <option value="cpp">C++</option>
-          <option value="js">JavaScript</option>
-          <option value="py">Python</option>
-          <option value="java">Java</option>
-        </select>
+            {/* RHS Custom Testcase Button (non-absolute, stays in flow) */}
+            <div className="ml-auto pr-6 pt-2">
+              <button
+                onClick={() => {
+                  setIsCustomOpen(true);
+                  setResponseData(null);
+                  setErrorData(null);
+                }}
+                className="text-blue-600 underline underline-offset-4 font-medium hover:text-blue-800 transition cursor-pointer"
+              >
+                Custom Testcase
+              </button>
+            </div>
+          </div>
+        </div>
 
         <div className="w-full max-w-3xl border rounded-xl shadow-md overflow-hidden mb-4">
           <Editor
@@ -402,12 +548,18 @@ int main() {
           >
             Run
           </button>
-          <button
-            onClick={run_code}
-            className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-lg shadow"
-          >
-            Submit
-          </button>
+          {userinfo ? (
+            <button
+              onClick={run_code}
+              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-lg shadow"
+            >
+              Submit
+            </button>
+          ) : (
+            <button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-lg shadow cursor-not-allowed opacity-50">
+              Submit
+            </button>
+          )}
         </div>
       </div>
     </div>

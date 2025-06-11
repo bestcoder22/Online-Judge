@@ -71,9 +71,85 @@ export const update_avatar = async (req,res) => {
     const user = await User.findOne({_id:userId});
     user.avatar_path=`/avatar/${avatarfile}`;
     await user.save();
-    res.json({
+    return res.json({
         success:true,
         message:"Avatar Updated Successfully!"
     })
+
+}
+
+export const save_submission = async (req,res) => {
+    const {userid,problemid,code,status} = req.body;
+    const user = await User.findOne({_id:userid});
+    user.submissions.push({
+        problemid,
+        code,
+        status
+    });
+    await user.save();
+    return res.json({
+        success:true,
+        message:"Submission saved Successfully!"
+    })
+}
+
+export const get_submissions = async (req,res) => {
+    const {userid} = req.body;
+    const user = await User.findOne({_id:userid});
+    const submission_details = user.submissions;
+    const submissionsMap = new Map();
+
+    for (let i = 0; i < submission_details.length; i++) {
+      const current = submission_details[i];
+      const existing = submissionsMap.get(current.problemid);
+
+      if (existing) {
+        if (current.status === "Accepted") {
+          existing.status = "Accepted";
+        }
+      } else {
+        submissionsMap.set(current.problemid, {
+          problemid: current.problemid,
+          status: current.status === "Accepted" ? "Accepted" : "Attempted",
+          id: current._id,
+        });
+      }
+    }
+
+    const submissions = Array.from(submissionsMap.values());
+
+    return res.json({
+        success:true,
+        submissions
+    })
+}
+
+export const get_leaderboard = async(req,res) => {
+    const users = await User.find({});
+    const leaderboard = [];
+
+    for (let user of users) {
+      const solvedSet = new Set();
+
+      for (let sub of user.submissions) {
+        if (sub.status === "Accepted") {
+          solvedSet.add(sub.problemid.toString()); // ensures uniqueness
+        }
+      }
+
+      leaderboard.push({
+        username: user.username,
+        problemsSolved: solvedSet.size,
+      });
+    }
+
+    // Optional: sort leaderboard by problems solved (descending)
+    leaderboard.sort((a, b) => b.problemsSolved - a.problemsSolved);
+
+    return res.json({
+      success: true,
+      message: "Leaderboard fetched successfully",
+      leaderboard: leaderboard,
+    });
 
 }

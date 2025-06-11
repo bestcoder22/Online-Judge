@@ -17,7 +17,14 @@ const UserSchema = new mongoose.Schema({
     avatar_path:{
         type:String,
         default: '/avatar/default-avatar.jpg'
-    }
+    },
+    submissions:[
+        {
+            problemid : {type:Number,required:true},
+            code : {type:String , required:true},
+            status : {type:String, required:true}
+        }
+    ]
 })
 
 const User = mongoose.model('user', UserSchema);

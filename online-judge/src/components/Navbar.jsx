@@ -34,6 +34,9 @@ const Navbar = () => {
             <Link style={{ textDecoration: "None" }} to="/admin">
               <h4 className="px-5">Admin</h4>
             </Link>
+            <Link style={{ textDecoration: "None" }} to="/submissions">
+              <h4 className="px-5">Submissions</h4>
+            </Link>
           </div>
 
           <div className="flex items-center gap-4">
