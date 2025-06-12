@@ -9,6 +9,10 @@
 /backend/dist
 /backend/codes
 /backend/outputs
+/backend/avatar
+
+# keep the default.jpg
+!avatar/default-avatar.jpg
 
 # Environment files
 *.env

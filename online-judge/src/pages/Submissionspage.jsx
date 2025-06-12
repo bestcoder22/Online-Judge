@@ -104,6 +104,16 @@ const Submissionspage = () => {
                   {submission.status}
                 </span>
               </div>
+
+              {/* ─── Time & Space Complexity Badges ─────────────────────────── */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+                  Time: {submission.time_complexity}
+                </span>
+                <span className="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm font-medium">
+                  Space: {submission.space_complexity}
+                </span>
+              </div>
             </>
           )}
         </div>

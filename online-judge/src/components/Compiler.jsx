@@ -2,6 +2,8 @@ import Editor from '@monaco-editor/react';
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { Clock, Database } from 'lucide-react'
+import ReactMarkdown from 'react-markdown';
 
 const Compiler = ({ problemid }) => {
   const {userinfo} = useContext(AuthContext);
@@ -16,6 +18,11 @@ const Compiler = ({ problemid }) => {
   const [customInput, setCustomInput] = useState('');
   const [customOutput, setCustomOutput] = useState('');
   const [customError, setCustomError] = useState(null);
+  const [timecomplexity , setTimeComplexity] = useState(null);
+  const [spacecomplexity , setSpaceComplexity] = useState(null);
+  const [codereview, setCodeReview] = useState(null)
+  const [showReview, setShowReview] = useState(false);
+  const [errorsuggestion , setErrorSuggestion] = useState(null);
 
 
   const defaultCodes = {
@@ -70,12 +77,29 @@ int main() {
       });
 
       if (res.data.status === 'success') {
+        const response_complexity = await axios.post('http://localhost:5000/get_complexity', {language,code});
+        const raw = response_complexity.data.complexity;        // e.g. "```txt\nO(n)\nO(1)\n```"
+        const lines = raw
+          .replace(/```[\s\S]*?```/, match => match  // strip only the fences
+            .replace(/^```.*\n/, '')
+            .replace(/```$/, '')
+          )
+          .split('\n')
+          .filter(Boolean);
+
+        setTimeComplexity(lines[0].trim());    // first line ⇒ time
+        setSpaceComplexity(lines[1].trim());   // second line ⇒ space
         setResponseData(res.data);
+
       } else {
         // Backend returned a JSON with status: "error"
+        const errorType = res.data.errorType || 'Error';
+        const message = res.data.message || 'An unknown error occurred.'
+        const response = await axios.post("http://localhost:5000/errorsuggestion", {language,code,problem,errorType,message});
+        setErrorSuggestion(response.data.suggestion);
         setErrorData({
-          errorType: res.data.errorType || 'Error',
-          message: res.data.message || 'An unknown error occurred.',
+          errorType: errorType,
+          message: message,
         });
       }
     } catch (err) {
@@ -239,7 +263,9 @@ int main() {
             userid:userinfo._id,
             problemid:problemid,
             code:code,
-            status:"Accepted"
+            status:"Accepted",
+            time_complexity:timecomplexity,
+            space_complexity:spacecomplexity
           }
 
           await axios.post("http://localhost:5000/submission",data);
@@ -257,6 +283,35 @@ int main() {
     }
     save_submission();
   },[errorData,responseData])
+
+  const ai_smart_fix = async() => {
+    const data = {
+      language:language,
+      code:code,
+    }
+    const response = await axios.post("http://localhost:5000/smartfix", data);
+    let rawCode = response.data.code;
+
+    // Remove markdown-style code fences
+    if (rawCode.startsWith("```")) {
+      rawCode = rawCode.replace(/^```[\s\S]*?\n/, ""); 
+      rawCode = rawCode.replace(/```$/, "");           
+    }
+
+    setCode(rawCode.trim());
+  } 
+
+  const ai_code_review = async() => {
+    const data = {
+      language:language,
+      code:code,
+      problem:problem
+    }
+    const response = await axios.post("http://localhost:5000/codereview", data);
+    setCodeReview(response.data.codereview);
+    setShowReview(true);  
+
+  }
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -319,14 +374,28 @@ int main() {
             </button>
 
             {errorData ? (
-              <div>
-                <h2 className="text-lg font-semibold text-red-600 mb-2 font-sans">
-                  {errorData.errorType}
-                </h2>
-                <span className="text-sm text-gray-800 whitespace-pre-line font-sans">
-                  {errorData.message}
-                </span>
-              </div>
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 space-y-4 max-w-md">
+  {/* 1) Error Type */}
+  <h2 className="text-lg font-semibold text-red-600 font-sans">
+    {errorData.errorType}
+  </h2>
+
+  {/* 2) AI Suggestion */}
+   {errorsuggestion && (
+    <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg shadow-sm">
+      <h3 className="text-sm font-medium text-blue-700 mb-1">💡 AI Suggestion</h3>
+      <h2 className="text-sm text-gray-800 whitespace-pre-line">
+        {errorsuggestion}
+      </h2>
+    </div>
+  )}
+  
+
+  {/* 3) Error Message */}
+  <span className="text-sm text-gray-800 whitespace-pre-line font-sans">
+    {errorData.message}
+  </span>
+</div>
             ) : (
               <div>
                 {/* If this was a sample‐run, the heading says “Sample Testcase Results” */}
@@ -338,9 +407,27 @@ int main() {
 
                 {/* If this was a full submit and all testcases passed, show “Accepted” */}
                 {!isSampleRun && allPassed && (
-                  <h2 className="text-2xl font-bold text-green-700 mb-4 font-sans">
-                    Accepted
-                  </h2>
+                  <>
+                    <h2 className="text-2xl font-bold text-green-700 mb-2">
+                      Accepted
+                    </h2>
+                    <div className="mt-5 flex flex-wrap items-center gap-3 mb-5">
+                      <span className="inline-flex items-center space-x-1 bg-blue-50 text-blue-800 px-3 py-1 rounded-full font-medium">
+                        <Clock className="w-4 h-4" />
+                        <span>Time: {timecomplexity}</span>
+                      </span>
+                      <span className="inline-flex items-center space-x-1 bg-purple-50 text-purple-800 px-3 py-1 rounded-full font-medium">
+                        <Database className="w-4 h-4" />
+                        <span>Space: {spacecomplexity}</span>
+                      </span>
+                    </div>
+                    <button
+                      onClick={ai_code_review}
+                      className="mb-5 cursor-pointer bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white font-semibold py-2 px-6 rounded-xl shadow-lg transform transition hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-pink-300"
+                    >
+                      Ai Code Review
+                    </button>
+                  </>
                 )}
 
                 {/* If this was a full submit but not all passed, show “Testcase Results” */}
@@ -541,7 +628,7 @@ int main() {
           />
         </div>
 
-        <div className="flex justify-around w-[400px]">
+        <div className="flex justify-around w-[600px]">
           <button
             onClick={run_sample_code}
             className="mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-8 rounded-lg shadow"
@@ -560,8 +647,60 @@ int main() {
               Submit
             </button>
           )}
+          <button
+            onClick={ai_smart_fix}
+            className="mt-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-8 rounded-lg shadow"
+          >
+            Smart Fix
+          </button>
         </div>
       </div>
+      {showReview && (
+  <div className="fixed inset-0 flex">
+    {/* 1) Blur only left half */}
+    <div
+      className="absolute inset-y-0 left-0 w-1/2 backdrop-blur-sm"
+      onClick={() => setShowReview(false)}
+    />
+
+    {/* 2) Centered panel container within left half */}
+    <div className="absolute inset-y-0 left-0 w-1/2 flex items-center justify-center">
+      <div className="relative z-10 bg-white rounded-2xl shadow-xl p-6 w-96 max-h-[80vh] overflow-auto font-serif">
+        {/* Close button */}
+        <button
+          onClick={() => setShowReview(false)}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+        >
+          ×
+        </button>
+
+        {/* Markdown content with bold headings & serif text */}
+        <ReactMarkdown
+          components={{
+            h1: ({node, ...props}) => (
+              <div className="font-bold text-lg text-gray-900 mb-2" {...props} />
+            ),
+            h2: ({node, ...props}) => (
+              <div className="font-bold text-lg text-gray-900 mb-2" {...props} />
+            ),
+            p: ({node, ...props}) => (
+              <div className="text-sm text-gray-800 mb-2" {...props} />
+            ),
+            ul: ({node, ...props}) => (
+              <ul className="list-disc list-inside ml-4 mb-2" {...props} />
+            ),
+            li: ({node, ...props}) => (
+              <li className="text-sm text-gray-800 mb-1" {...props} />
+            ),
+          }}
+        >
+          {codereview}
+        </ReactMarkdown>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

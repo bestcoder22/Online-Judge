@@ -79,12 +79,15 @@ export const update_avatar = async (req,res) => {
 }
 
 export const save_submission = async (req,res) => {
-    const {userid,problemid,code,status} = req.body;
+    const {userid,problemid,code,status,time_complexity,space_complexity} = req.body;
     const user = await User.findOne({_id:userid});
+    
     user.submissions.push({
         problemid,
         code,
-        status
+        status,
+        time_complexity,
+        space_complexity
     });
     await user.save();
     return res.json({

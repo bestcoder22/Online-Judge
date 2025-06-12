@@ -194,8 +194,8 @@ const Profile = () => {
             ) : (
               <ul >
                 {acceptedList.map((s) => (
-                  <Link to={`/problems/${s.problemid}`}>
-                    <li key={s.id} className="p-2 bg-green-50 rounded mt-1">
+                  <Link key={s.id} to={`/problems/${s.problemid}`}>
+                    <li className="p-2 bg-green-50 rounded mt-1">
                       <span className="font-medium">{s.title}</span>
                       <span className="ml-2 text-sm text-gray-500">
                         [{s.tag}]
@@ -218,8 +218,8 @@ const Profile = () => {
             ) : (
               <ul className="space-y-1">
                 {attemptedList.map((s) => (
-                  <Link to={`/problems/${s.problemid}`}>
-                    <li key={s.id} className="p-2 bg-yellow-50 rounded mt-1">
+                  <Link key={s.id} to={`/problems/${s.problemid}`}>
+                    <li className="p-2 bg-yellow-50 rounded mt-1">
                       <span className="font-medium">{s.title}</span>
                       <span className="ml-2 text-sm text-gray-500">
                         [{s.tag}]

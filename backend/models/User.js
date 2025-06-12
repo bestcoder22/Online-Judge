@@ -22,7 +22,9 @@ const UserSchema = new mongoose.Schema({
         {
             problemid : {type:Number,required:true},
             code : {type:String , required:true},
-            status : {type:String, required:true}
+            status : {type:String, required:true},
+            time_complexity : {type:String , required:true, default:"N/A"},
+            space_complexity : {type:String , required:true, default:"N/A"}
         }
     ]
 })
