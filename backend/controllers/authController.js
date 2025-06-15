@@ -8,7 +8,7 @@ export const login = async (req,res) => {
     const user = await User.findOne({email: req.body.email});
     if(user){
         if(req.body.password === user.password){
-            const token = jwt.sign({id : user._id , role : "user"}, process.env.JWT_SECRET);
+            const token = jwt.sign({id : user._id , role : user.role}, process.env.JWT_SECRET);
             res.cookie("access_token",token,{
                 httpOnly: true
             })

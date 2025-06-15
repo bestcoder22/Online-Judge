@@ -31,7 +31,7 @@ app.use(cors({
 
 
 app.use('/', authrouter);
-app.use('/admin',testcaserouter);
+app.use('/',testcaserouter);
 app.use('/',problemrouter);
 app.use('/',submissionrouter);
 

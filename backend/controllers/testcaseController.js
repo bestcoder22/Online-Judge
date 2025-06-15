@@ -1,7 +1,50 @@
 import Testcase from "../models/Testcase.js";
+import { executeCpp } from "../utils/executeCpp.js";
+import { generateFile } from "../utils/generateFile.js";
+
+export const run_code = async (req,res) => {
+    const {problemid,code,language,inputArray} = req.body;
+    try{
+        const filePath = generateFile(code,language);
+
+        if (inputArray) {
+          const output = await executeCpp(filePath, inputArray);
+          return res.json({
+            status: "success",
+            filePath,
+            output,
+          });
+        }
+        else{
+          const testcase = await Testcase.findOne({problemid: problemid});
+        //   console.log(response_input.data.success)
+          const output = await executeCpp(filePath,testcase.input);
+          return res.json({
+          status: "success",
+          filePath,
+          input:testcase.input,
+          expectedOutput:testcase.expectedOutput,
+          output,
+          });
+        }
+    } catch (err) {
+        const { step, errorType, error } = err;
+    return res.json({
+      status: "error",
+      step,
+      errorType,
+      message: error,
+    });
+  }
+}
 
 // import fs from "fs"
 export const get_details_input = (req,res) => {
+
+    if(req.userRole != "admin") return res.status(401).json({
+        success:false ,
+        message:"Unauthorized Access!"
+    })
     const { originalname, buffer } = req.file;
     const text = buffer.toString('utf8');
     const rawCases = text.split(/\n\s*\n/);
@@ -22,6 +65,11 @@ export const get_details_input = (req,res) => {
 }
 
 export const get_details_output = (req,res) => {
+
+    if(req.userRole != "admin") return res.status(401).json({
+        success:false ,
+        message:"Unauthorized Access!"
+    })
     const { originalname, buffer } = req.file;
     const text = buffer.toString('utf8');
     const rawCases = text.split(/\n\s*\n/);
@@ -43,6 +91,12 @@ export const get_details_output = (req,res) => {
 }
 
 export const save_testcase = async(req,res) => {
+
+    if(req.userRole != "admin") return res.status(401).json({
+        success:false ,
+        message:"Unauthorized Access!"
+    })
+
     const {response_input,response_output} = req.body;
     const testcases = await Testcase.find({});
     let id;
@@ -68,8 +122,13 @@ export const save_testcase = async(req,res) => {
 }
 
 export const delete_testcase = async (req,res) => {
+
+    if(req.userRole != "admin") return res.status(401).json({
+        success:false ,
+        message:"Unauthorized Access!"
+    })
+
     const {problemid} = req.body;
-    console.log(problemid);
     await Testcase.findOneAndDelete({problemid:problemid});
     await Testcase.updateMany(
         { problemid: { $gt: problemid } },
@@ -79,6 +138,7 @@ export const delete_testcase = async (req,res) => {
 }
 
 export const get_testcase = async (req,res) => {
+
     const {problemid} = req.body;
     const testcase = await Testcase.findOne({problemid: problemid});
     res.json({
@@ -88,6 +148,12 @@ export const get_testcase = async (req,res) => {
 }
 
 export const update_testcase = async (req,res) =>{
+
+    if(req.userRole != "admin") return res.status(401).json({
+        success:false ,
+        message:"Unauthorized Access!"
+    })
+
     const { problemid } = req.body;
     await Testcase.findOneAndUpdate(
       { problemid },         // find by problemid

@@ -1,44 +1,128 @@
+// src/pages/Signup.jsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import bgImage from "../assets/5166950.jpg";
+import CursorNetBackground from "../components/Cursornetbackground";
+
+const containerVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+};
+
+const inputVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.4 } }
+};
+
+const buttonVariants = {
+  hover: { scale: 1.03, transition: { yoyo: Infinity, duration: 0.4 } }
+};
 
 const Signup = () => {
-    const [user,setUser] = useState({
-        username: "",
-        email: "",
-        password : ""
-    })
-    const changeHandler = (e) =>{
-        setUser({...user,[e.target.name]:e.target.value});
-    }
-    const submit = async () => {
-        const response = await axios.post('http://localhost:5000/signup' , user);
-        if(response.data.success){
-        alert(response.data.message);
-        window.location.replace("/login");
-        }
-        else alert(response.data.errors);
-    }
+  const [user, setUser] = useState({
+    username: "",
+    email: "",
+    password: ""
+  });
 
-    return (
-        <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-sm flex flex-col space-y-4 border-4 border-indigo-500 rounded-xl shadow-xl/30 px-10 py-15">
-                <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Signup</h2>
-                <div className="mt-2 flex flex-col space-y-4">
-                    <input name="username" type="text" placeholder="Username"  onChange={changeHandler} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
-                    <input name="email" type="email" placeholder="Email Address"  onChange={changeHandler} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
-                    <input name="password" type="password" placeholder="Password"  onChange={changeHandler} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"/>
-                </div>
-                <div className="flex flex-col justify-center py-5">
-                    <button onClick={submit} className="cursor-pointer bg-indigo-500 px-3 py-2 font-bold tracking-tight text-white shadow-xl/10 rounded-xl">Continue</button>
-                    <div className="flex justify-center mt-4">
-                        <h6>Already have an account?</h6>
-                        <Link style={{textDecoration: 'none'}} to='/login'><button className="font-sans tracking-tight cursor-pointer ml-2 bg-emerald-500 text-white rounded-xl px-2">Login Here</button></Link>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );  
-}
+  const changeHandler = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const submit = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/signup', user);
+      if (response.data.success) {
+        toast.success(response.data.message || 'Signup successful!');
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 1500);
+      } else {
+        const errMsg = response.data.errors || response.data.message || 'Signup failed';
+        toast.error(Array.isArray(errMsg) ? errMsg.join(', ') : errMsg);
+      }
+    } catch (err) {
+      console.error(err);
+      if (err.response && err.response.data && err.response.data.message) {
+        toast.error(err.response.data.message);
+      } else {
+        toast.error('Signup failed. Please try again.');
+      }
+    }
+  };
+
+  return (
+    <div className="relative flex items-center justify-center min-h-screen px-6 py-12">
+      {/* Background image */}
+      <div
+        className="fixed inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${bgImage})`, zIndex: -30 }}
+      />
+      {/* Dark overlay for contrast */}
+      <div className="fixed inset-0 bg-indigo-900/70" style={{ zIndex: -20 }} />
+      <CursorNetBackground />
+
+      <motion.div
+        className="relative w-full max-w-md bg-white/10 backdrop-blur-md border border-indigo-500 rounded-xl shadow-lg p-8 space-y-6"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <h2 className="text-center text-2xl font-bold text-white">Signup</h2>
+        <motion.div className="space-y-4" variants={containerVariants} initial="hidden" animate="visible">
+          <motion.input
+            name="username"
+            type="text"
+            placeholder="Username"
+            value={user.username}
+            onChange={changeHandler}
+            className="block w-full rounded-md bg-white/20 px-3 py-2 text-base text-white placeholder-gray-300 border border-transparent focus:border-indigo-400 focus:bg-white/30 focus:outline-none transition"
+            variants={inputVariants}
+          />
+          <motion.input
+            name="email"
+            type="email"
+            placeholder="Email Address"
+            value={user.email}
+            onChange={changeHandler}
+            className="block w-full rounded-md bg-white/20 px-3 py-2 text-base text-white placeholder-gray-300 border border-transparent focus:border-indigo-400 focus:bg-white/30 focus:outline-none transition"
+            variants={inputVariants}
+          />
+          <motion.input
+            name="password"
+            type="password"
+            placeholder="Password"
+            value={user.password}
+            onChange={changeHandler}
+            className="block w-full rounded-md bg-white/20 px-3 py-2 text-base text-white placeholder-gray-300 border border-transparent focus:border-indigo-400 focus:bg-white/30 focus:outline-none transition"
+            variants={inputVariants}
+          />
+        </motion.div>
+        <motion.div className="mt-6">
+          <motion.button
+            onClick={submit}
+            className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 rounded-full shadow-md transition"
+            variants={buttonVariants}
+            whileHover="hover"
+          >
+            Continue
+          </motion.button>
+        </motion.div>
+        <p className="text-center text-sm text-gray-200">
+          Already have an account?{' '}
+          <Link to="/login" className="text-indigo-300 hover:text-indigo-100 font-medium">
+            Login Here
+          </Link>
+        </p>
+      </motion.div>
+      {/* Toast container */}
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+    </div>
+  );
+};
 
 export default Signup;

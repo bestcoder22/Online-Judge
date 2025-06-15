@@ -12,6 +12,7 @@ import Problempage from './pages/Problempage';
 import Profile from './pages/Profile';
 import Submissions from './pages/Submissions';
 import Submissionspage from './pages/Submissionspage';
+import ProtectedRoutes from './utils/ProtectedRoutes';
 
 
 const App = () =>{
@@ -21,15 +22,18 @@ const App = () =>{
                 <Route path='/' element={<Home />} />
                 <Route path='/login' element={<Login />} />
                 <Route path='/signup' element={<Signup />} />
-                <Route path='/profile' element={< Profile/>} />
+                <Route element={<ProtectedRoutes />} >
+                    <Route path='/profile' element={< Profile/>} />
+                    <Route path='/admin/addproblem' element={<Addproblem />} />
+                    <Route path='/admin/updateproblem' element={<Updateproblem />} />
+                    <Route path='/submissions/:submissionid' element={<Submissionspage />} />
+                </Route>
                 <Route path='/problems' element={<Problems />} />
                 <Route path='/problems/:problemid' element={<Problempage />} />
                 <Route path='/leaderboard' element={<Leaderboard />} />
                 <Route path='/admin' element={<Admin />} />
-                <Route path='/admin/addproblem' element={<Addproblem />} />
-                <Route path='/admin/updateproblem' element={<Updateproblem />} />
                 <Route path='/submissions' element={<Submissions />} />
-                <Route path='/submissions/:submissionid' element={<Submissionspage />} />
+                
             </Routes>
         </>
     )

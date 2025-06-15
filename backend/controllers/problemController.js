@@ -1,6 +1,11 @@
 import Problem from "../models/Problem.js"
 import axios from 'axios';
 export const addproblem = async (req,res) => {
+
+    if(req.userRole != "admin") return res.status(401).json({
+        success:false ,
+        message:"Unauthorized Access!"
+    })
     // const {problemid , tag , title , description} = req.body;
     const problem = new Problem(req.body);
     await problem.save();
@@ -13,10 +18,16 @@ export const getproblems = async (req,res) => {
 }
 
 export const deleteproblem = async (req,res) => {
+
+    if(req.userRole != "admin") return res.status(401).json({
+        success:false ,
+        message:"Unauthorized Access!"
+    })
+
     const { problemid }= req.body;
     await Problem.findOneAndDelete({problemid:problemid});
     
-    await axios.post("http://localhost:5000/admin/deletetestcases",{ problemid });
+    
     await Problem.updateMany(
       { problemid: { $gt: problemid } },
       { $inc: { problemid: -1 } }
@@ -25,6 +36,12 @@ export const deleteproblem = async (req,res) => {
 
 }
 export const update_problem = async (req,res) =>{
+
+    if(req.userRole != "admin") return res.status(401).json({
+        success:false ,
+        message:"Unauthorized Access!"
+    })
+
     const { problemid } = req.body;
     await Problem.findOneAndUpdate(
       { problemid },         // find by problemid

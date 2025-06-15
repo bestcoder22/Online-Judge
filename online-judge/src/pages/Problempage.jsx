@@ -5,8 +5,7 @@ import Navbar from "../components/Navbar";
 const Problempage = () => {
     const {problemid} = useParams();
     return(
-        <div>
-            <Navbar />
+        <div className="font-sans">
             <Compiler problemid={problemid} />
         </div>
     )

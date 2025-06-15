@@ -1,6 +1,3 @@
-import { executeCpp } from "../utils/executeCpp.js";
-import { generateFile } from "../utils/generateFile.js";
-import axios from "axios"
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv"
 
@@ -8,40 +5,6 @@ dotenv.config();
 
 const ai = new GoogleGenAI({ apiKey: process.env.AI_API_KEY});
 
-export const run_code = async (req,res) => {
-    const {problemid,code,language,inputArray} = req.body;
-    try{
-        const filePath = generateFile(code,language);
-
-        if (inputArray) {
-          const output = await executeCpp(filePath, inputArray);
-          return res.json({
-            status: "success",
-            filePath,
-            output,
-          });
-        }
-        else{
-          const response_input = await axios.post("http://localhost:5000/admin/gettestcase", {problemid});
-          const output = await executeCpp(filePath,response_input.data.testcase.input);
-          return res.json({
-          status: "success",
-          filePath,
-          input:response_input.data.testcase.input,
-          expectedOutput:response_input.data.testcase.expectedOutput,
-          output,
-          });
-        }
-    } catch (err) {
-        const { step, errorType, error } = err;
-    return res.json({
-      status: "error",
-      step,
-      errorType,
-      message: error,
-    });
-  }
-}
 
 export const ai_smart_fix = async (req, res) => {
   const { language, code } = req.body;
@@ -58,7 +21,7 @@ ${code}
 Note: Output the code in markdown format
 `;
 
-  
+  try{
     const response = await ai.models.generateContent({
     model: "gemini-2.0-flash",
     contents: `${prompt}`,
@@ -70,6 +33,12 @@ Note: Output the code in markdown format
       success:true,
       code:aiResponse
     });
+  } catch(error){
+    return res.json({
+      success:false,
+      error:error.message
+    })
+  }
   
 };
 
@@ -85,15 +54,22 @@ Instructions:
 - First line: Time Complexity i.e. O(..)
 - Second line: Space Complexity i.e. O(..)
 - Be careful with variable **naming cases** — match **uppercase/lowercase letters exactly** as used in the code and bio.`
-  const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    contents: `${prompt}`,
-  });
-  const aiResponse = response.text;
-  return res.json({
-    success:true,
-    complexity:aiResponse
-  })
+  try{
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: `${prompt}`,
+    });
+    const aiResponse = response.text;
+    return res.json({
+      success:true,
+      complexity:aiResponse
+    })
+  } catch (error){
+    return res.json({
+      success:false,
+      error:error
+    })
+  }
 }
 
 export const ai_code_review = async (req,res) => {
@@ -163,15 +139,22 @@ ${problem.description}
 
 ${problem.constraints}
 `;
-  const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    contents: `${prompt}`,
-  });
-  const aiResponse = response.text;
-  return res.json({
-    success:true,
-    codereview:aiResponse
-  })
+  try{
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: `${prompt}`,
+    });
+    const aiResponse = response.text;
+    return res.json({
+      success:true,
+      codereview:aiResponse
+    })
+  } catch (error) {
+    return res.json({
+      success:false,
+      error:error.message
+    })
+  }
 }
 
 export const ai_error_suggestion = async (req,res) => {
@@ -199,7 +182,7 @@ Provide **only two bullet points** in markdown:
 2. Exactly what the user should do to resolve it.
 
 Keep each point very short and focused—no extra commentary.`;
-
+try{
   const response = await ai.models.generateContent({
     model: "gemini-2.0-flash",
     contents: `${prompt}`,
@@ -209,4 +192,11 @@ Keep each point very short and focused—no extra commentary.`;
     success:true,
     suggestion:aiResponse
   })
+}
+catch (error) {
+  return res.json({
+      success:false,
+      error:error.message
+    })
+}
 }

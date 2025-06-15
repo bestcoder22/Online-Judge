@@ -12,7 +12,7 @@ export const AuthContextProvider = (props) => {
                 const response = await axios.get("http://localhost:5000/me", {withCredentials:true});
                 if(response.data.success){
                     const userid=response.data.id
-                    const response_user = await axios.post("http://localhost:5000/getuser", {userid});
+                    const response_user = await axios.post("http://localhost:5000/getuser", {userid} , {withCredentials:true});
                     setUserinfo(response_user.data.user);
                     if(response.data.role === "admin")
                         setisAdmin(true);
