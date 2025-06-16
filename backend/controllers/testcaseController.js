@@ -1,5 +1,8 @@
 import Testcase from "../models/Testcase.js";
 import { executeCpp } from "../utils/executeCpp.js";
+import { executeJava } from "../utils/executeJava.js";
+import { executeJs } from "../utils/executeJs.js";
+import { executePython } from "../utils/executePython.js";
 import { generateFile } from "../utils/generateFile.js";
 
 export const run_code = async (req,res) => {
@@ -8,7 +11,19 @@ export const run_code = async (req,res) => {
         const filePath = generateFile(code,language);
 
         if (inputArray) {
-          const output = await executeCpp(filePath, inputArray);
+            let output;
+            if(language === "cpp"){
+                output = await executeCpp(filePath, inputArray);
+            }
+            else if(language === "py"){
+                output = await executePython(filePath, inputArray);
+            }
+            else if(language === "java"){
+                output = await executeJava(filePath, inputArray);
+            }
+            else if(language === "js"){
+                output = await executeJs(filePath, inputArray);
+            }
           return res.json({
             status: "success",
             filePath,
@@ -18,7 +33,19 @@ export const run_code = async (req,res) => {
         else{
           const testcase = await Testcase.findOne({problemid: problemid});
         //   console.log(response_input.data.success)
-          const output = await executeCpp(filePath,testcase.input);
+        let output
+        if(language === "cpp"){
+          output = await executeCpp(filePath,testcase.input);
+        }
+        else if(language === "py"){
+            output = await executePython(filePath,testcase.input);
+        }
+        else if(language === "java"){
+            output = await executeJava(filePath,testcase.input);
+        }
+        else if(language === "js"){
+            output = await executeJs(filePath,testcase.input);
+        }
           return res.json({
           status: "success",
           filePath,
