@@ -127,7 +127,7 @@ const Problems = () => {
   };
 
   return (
-    <div className="font-sans bg-gray-50 min-h-screen">
+    <div className="font-sans bg-gray-50 dark:bg-gray-900 min-h-screen">
       <Navbar />
       <div className="max-w-5xl mx-auto py-8 px-4 space-y-6">
         {/* Top bar with icons */}
@@ -153,7 +153,7 @@ const Problems = () => {
                       setCurrentPage(1);
                     }}
                     placeholder="Search..."
-                    className="border border-gray-300 rounded-l-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="border border-gray-300 dark:border-gray-600 rounded-l-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                     autoFocus
                   />
                 </motion.div>
@@ -166,9 +166,9 @@ const Problems = () => {
                   setSearchTerm('');
                 }
               }}
-              className="p-2 bg-white border border-gray-300 rounded-r-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400 flex items-center justify-center"
+              className="p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-r-md hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 flex items-center justify-center"
             >
-              <Search size={16} />
+              <Search size={16} className="text-gray-700 dark:text-gray-200" />
             </button>
           </div>
 
@@ -176,9 +176,9 @@ const Problems = () => {
           <div className="relative" ref={settingsRef}>
             <button
               onClick={() => setSettingsOpen((prev) => !prev)}
-              className="p-2 bg-white border border-gray-300 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400 flex items-center"
+              className="p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 flex items-center"
             >
-              <Sliders size={16} />
+              <Sliders size={16} className="text-gray-700 dark:text-gray-200" />
             </button>
             <AnimatePresence>
               {settingsOpen && (
@@ -189,19 +189,19 @@ const Problems = () => {
                   exit="exit"
                   variants={settingsVariants}
                   transition={{ duration: 0.15 }}
-                  className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-md shadow-lg z-10 p-4 space-y-4"
+                  className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg z-10 p-4 space-y-4"
                 >
                   {/* Close button */}
                   <button
                     onClick={() => setSettingsOpen(false)}
-                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                    className="absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                   >
                     <X size={16} />
                   </button>
 
                   {/* Search inside settings */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search</label>
                     <input
                       type="text"
                       value={searchTerm}
@@ -210,23 +210,23 @@ const Problems = () => {
                         setCurrentPage(1);
                       }}
                       placeholder="Search by title or ID"
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                      className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                     />
                   </div>
 
                   {/* Filter by Tag */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Tag</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Filter by Tag</label>
                     <select
                       value={selectedTag}
                       onChange={(e) => {
                         setSelectedTag(e.target.value);
                         setCurrentPage(1);
                       }}
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                      className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                     >
                       {tagOptions.map((tag) => (
-                        <option key={tag} value={tag}>
+                        <option key={tag} value={tag} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
                           {tag}
                         </option>
                       ))}
@@ -235,7 +235,7 @@ const Problems = () => {
 
                   {/* Sort */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sort By</label>
                     <div className="flex space-x-2">
                       <select
                         value={sortField}
@@ -243,7 +243,7 @@ const Problems = () => {
                           setSortField(e.target.value);
                           setCurrentPage(1);
                         }}
-                        className="mt-1 flex-1 border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                        className="mt-1 flex-1 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                       >
                         <option value="problemid">ID</option>
                         <option value="title">Title</option>
@@ -254,7 +254,7 @@ const Problems = () => {
                           setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
                           setCurrentPage(1);
                         }}
-                        className="mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                        className="mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                       >
                         {sortOrder === "asc" ? "↑" : "↓"}
                       </button>
@@ -263,17 +263,17 @@ const Problems = () => {
 
                   {/* Items per Page */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Items per Page</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Items per Page</label>
                     <select
                       value={itemsPerPage}
                       onChange={(e) => {
                         setItemsPerPage(Number(e.target.value));
                         setCurrentPage(1);
                       }}
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                      className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                     >
                       {[5, 10, 20, 50].map((n) => (
-                        <option key={n} value={n}>{n}</option>
+                        <option key={n} value={n} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">{n}</option>
                       ))}
                     </select>
                   </div>
@@ -286,18 +286,18 @@ const Problems = () => {
         {/* List of problems */}
         <div className="space-y-4">
           {paginated.length === 0 ? (
-            <p className="text-gray-500">No problems found.</p>
+            <p className="text-gray-500 dark:text-gray-400">No problems found.</p>
           ) : (
             paginated.map((problem) => (
               <Link key={problem._id} to={`/problems/${problem.problemid}`}>                  
-                <div className="cursor-pointer bg-white shadow-md hover:shadow-lg rounded-lg p-6 transition-shadow duration-200 m-3">
+                <div className="cursor-pointer bg-white dark:bg-gray-800 shadow-md dark:shadow-none rounded-lg p-6 m-3 transform transition-transform duration-200 hover:scale-[1.03]">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-gray-500">ID: {problem.problemid}</span>
-                    <span className="text-xs font-semibold text-indigo-700 bg-indigo-100 px-2 py-1 rounded">
+                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">ID: {problem.problemid}</span>
+                    <span className="text-xs font-semibold text-indigo-700 bg-indigo-100 dark:bg-indigo-900 dark:text-indigo-100 px-2 py-1 rounded">
                       {problem.tag}
                     </span>
                   </div>
-                  <h2 className="text-lg font-semibold text-gray-800">{problem.title}</h2>
+                  <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{problem.title}</h2>
                 </div>
               </Link>
             ))
@@ -311,11 +311,11 @@ const Problems = () => {
             disabled={currentPage === 1}
             className={`px-3 py-1 rounded-md border ${
               currentPage === 1
-                ? "text-gray-400 border-gray-200 cursor-not-allowed"
-                : "text-gray-700 border-gray-300 hover:bg-gray-100"
+                ? "text-gray-400 border-gray-200 cursor-not-allowed dark:text-gray-600 dark:border-gray-700"
+                : "text-gray-700 border-gray-300 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700"
             }`}
           >
-            &laquo; Prev
+            « Prev
           </button>
 
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
@@ -325,7 +325,7 @@ const Problems = () => {
               className={`px-3 py-1 rounded-md border ${
                 pageNum === currentPage
                   ? "bg-indigo-500 text-white border-indigo-500"
-                  : "text-gray-700 border-gray-300 hover:bg-gray-100"
+                  : "text-gray-700 border-gray-300 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700"
               }`}
             >
               {pageNum}
@@ -337,11 +337,11 @@ const Problems = () => {
             disabled={currentPage === totalPages}
             className={`px-3 py-1 rounded-md border ${
               currentPage === totalPages
-                ? "text-gray-400 border-gray-200 cursor-not-allowed"
-                : "text-gray-700 border-gray-300 hover:bg-gray-100"
+                ? "text-gray-400 border-gray-200 cursor-not-allowed dark:text-gray-600 dark:border-gray-700"
+                : "text-gray-700 border-gray-300 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700"
             }`}
           >
-            Next &raquo;
+            Next »
           </button>
         </div>
       </div>

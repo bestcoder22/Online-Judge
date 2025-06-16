@@ -66,14 +66,14 @@ const Home = () => {
       <CursorNetBackground />
 
       {/* Page content */}
-      <div className="relative z-10 flex flex-col">
+      <div className="relative z-10 flex flex-col flex-grow">
         {/* Navbar */}
         <div className="backdrop-blur-md bg-white/10 shadow-sm z-20">
           <Navbar />
         </div>
 
         {/* Main */}
-        <main className="px-6 py-12 flex flex-col items-center">
+        <main className="flex-grow px-6 py-12 flex flex-col items-center">
           {/* Animated Welcome */}
           <motion.section
             className="text-center mb-6 max-w-2xl"

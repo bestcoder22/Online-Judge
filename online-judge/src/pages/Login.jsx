@@ -40,7 +40,7 @@ const Login = () => {
         // Navigate after a short delay to allow the toast to show
         setTimeout(() => {
           window.location.href = '/';
-        }, 1500);
+        }, 1200);
       } else {
         // If the API returns errors object or message
         const errMsg = response.data.errors || response.data.message || 'Login failed';

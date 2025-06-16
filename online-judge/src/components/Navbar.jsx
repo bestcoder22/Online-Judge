@@ -1,11 +1,15 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { Sun, Moon } from "lucide-react";
+import { ThemeContext } from "../context/ThemeContext";
+import { toast, ToastContainer } from "react-toastify";
 
 const Navbar = () => {
   const { userinfo, isAdmin } = useContext(AuthContext);
+  const {isDark, toggleTheme } = useContext(ThemeContext)
   const location = useLocation();
   const path = location.pathname;
 
@@ -14,6 +18,8 @@ const Navbar = () => {
   const isLeaderboard = path.startsWith("/leaderboard");
   const isSpecial = isHome || isLeaderboard;
 
+  // Theme state
+  
   const handleLogout = async () => {
     try {
       const response = await axios.post(
@@ -21,66 +27,60 @@ const Navbar = () => {
         {},
         { withCredentials: true }
       );
-      alert(response.data.message);
-      window.location.replace("/");
+      toast.success(response.data.message || 'Logged Out Successfully!');
+      setTimeout(() => {
+          window.location.href = '/';
+        }, 1200);
     } catch {
-      window.location.replace("/");
+      toast.error(err.response.data.message);
     }
   };
 
-  // Active-link detection
-  const isActive = (route) => {
-    if (route === "/") return path === "/";
-    return path === route || path.startsWith(route + "/");
-  };
+  const isActive = route =>
+    route === "/" ? path === "/" : path === route || path.startsWith(route + "/");
 
-  // Title classes
+  // Classes
   const titleClass = isSpecial
     ? "font-serif text-3xl font-extrabold text-teal-300 drop-shadow-[0_0_8px_rgba(0,255,255,0.7)] drop-shadow-[0_0_14px_rgba(0,255,255,0.4)]"
-    : "font-serif text-2xl font-medium text-black";
-
-  // Link text base
+    : "font-serif text-2xl font-medium text-black dark:text-white";
   const linkTextBase = isSpecial
     ? "text-blue-300 font-bold text-xl"
-    : "text-black font-medium text-lg";
-
-  // Underline helper
-  const underlineClass = "small-underline";
-
-  // Buttons
+    : "text-black font-medium text-lg dark:text-gray-100";
   const specialBtnClass =
-    "bg-animated-gradient bg-300% animate-gradient text-white font-semibold py-2 px-6 rounded-2xl shadow-lg hover:scale-105 transform transition duration-200 hover:opacity-90 focus:outline-none focus:ring-4 focus:ring-purple-300";
+    "bg-animated-gradient bg-300% animate-gradient text-white font-semibold py-2 px-6 rounded-2xl shadow-lg hover:scale-105 transition duration-200 hover:opacity-90 focus:outline-none focus:ring-4 focus:ring-purple-300";
   const normalBtnClass =
-    "bg-white text-black border border-gray-600 rounded-xl px-4 py-2 hover:shadow-lg transition-shadow transform transition hover:opacity-90 hover:scale-105 duration-200";
+    "bg-white text-black border border-gray-600 rounded-xl px-4 py-2 hover:shadow-lg transition-transform hover:opacity-90 hover:scale-105 duration-200 dark:bg-gray-800 dark:text-white dark:border-gray-600";
 
   return (
-    <div>
-      <div className="flex justify-around mt-5 items-center">
-        {/* Logo / Title */}
+    <div
+      className={`${isSpecial ? "" : "bg-white dark:bg-gray-800"} sticky top-0 inset-x-0 z-50`}
+    >
+      <div className="flex justify-around items-center px-6 py-4">
+        {/* Logo */}
         <Link to="/">
           <motion.h2
             className={titleClass}
-            whileHover={ isSpecial ? { scale: 1.1, y: -2 } : { scale: 1.03 } }
+            whileHover={isSpecial ? { scale: 1.1, y: -2 } : { scale: 1.03 }}
             transition={{ type: "spring", stiffness: 300, damping: 10 }}
           >
             &lt;CodeIQ/&gt;
           </motion.h2>
-        </Link>
+          </Link>
 
-        {/* Navigation Links */}
-        <div className="flex justify-around m-2">
+        {/* Links */}
+        <div className="flex justify-center space-x-4">
           {[
             { to: "/problems", label: "Problems" },
             { to: "/leaderboard", label: "Leaderboard" },
-            ...(isAdmin ? [{ to: "/admin",      label: "Admin"       }] : []),
+            ...(isAdmin ? [{ to: "/admin", label: "Admin" }] : []),
             { to: "/submissions", label: "Submissions" },
           ].map(({ to, label }) => (
-            <Link key={to} to={to} style={{ textDecoration: "none" }}>
+            <Link key={to} to={to} className="no-underline">
               <motion.h3
                 className={`${linkTextBase} px-5 ${
-                  isActive(to) ? underlineClass : ""
+                  isActive(to) ? "small-underline" : ""
                 }`}
-                whileHover={ isSpecial ? { scale: 1.1, y: -2 } : { scale: 1.05 } }
+                whileHover={isSpecial ? { scale: 1.1, y: -2 } : { scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300, damping: 10 }}
               >
                 {label}
@@ -89,52 +89,34 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Login / Logout / Avatar */}
+        {/* Auth + Toggle */}
         <div className="flex items-center gap-4">
           {userinfo ? (
             <>
-              <button
-                onClick={handleLogout}
-                className={isSpecial ? specialBtnClass : normalBtnClass}
-              >
+              <button onClick={handleLogout} className={isSpecial ? specialBtnClass : normalBtnClass}>
                 Logout
               </button>
               <Link to="/profile">
-                {isSpecial ? (
-                  // Gradient border effect without rotating photo
-                  <div className="relative rounded-full p-0.5">
-                    {/* Behind the img: animated gradient background */}
-                    <div className="absolute inset-0 rounded-full gradient-border animate-gradient-bg"></div>
-                    <img
-                      src={`http://localhost:5000${userinfo.avatar_path}`}
-                      alt="Profile"
-                      className="relative w-10 h-10 rounded-full bg-white hover:scale-105 hover:shadow-lg transition-shadow duration-200 cursor-pointer"
-                    />
-                  </div>
-                ) : (
-                  <img
-                    src={`http://localhost:5000${userinfo.avatar_path}`}
-                    alt="Profile"
-                    className="w-10 h-10 rounded-full hover:shadow-xl hover:scale-105 hover:bg-gray-300 duration-200 cursor-pointer"
-                  />
-                )}
+                <img
+                  src={`http://localhost:5000${userinfo.avatar_path}`}
+                  alt="Profile"
+                  className="w-10 h-10 rounded-full hover:shadow-xl hover:scale-105 transition duration-200 cursor-pointer"
+                />
               </Link>
             </>
           ) : (
             <Link to="/login" className="no-underline">
-              <button
-                type="button"
-                className={isSpecial ? specialBtnClass : normalBtnClass}
-              >
+              <button type="button" className={isSpecial ? specialBtnClass : normalBtnClass}>
                 Login
               </button>
             </Link>
           )}
+          <button onClick={toggleTheme}>
+            {isDark ? <Sun className="w-6 h-6 text-white" /> : <Moon className="w-6 h-6 text-black" />}
+          </button>
         </div>
       </div>
-
-      {/* Divider */}
-      <hr className="mt-3.5 border-gray-300" />
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
     </div>
   );
 };

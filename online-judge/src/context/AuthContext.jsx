@@ -5,6 +5,7 @@ export const AuthContext = createContext(null);
 export const AuthContextProvider = (props) => {
     const [isAdmin,setisAdmin] = useState(null);
     const [userinfo,setUserinfo] = useState(null);
+    const [loading, setLoading] = useState(true); //loading flag 
 
     useEffect(() => {
         const checkadmin = async () => {
@@ -20,6 +21,8 @@ export const AuthContextProvider = (props) => {
             }
             catch(error){
                 console.error("Error in getting token", error);
+            }finally {
+                setLoading(false);   // ← finished
             }
         }
         
@@ -27,7 +30,7 @@ export const AuthContextProvider = (props) => {
     },[]);
     // console.log(isAdmin);
 
-    const contextValues = {isAdmin,userinfo};
+    const contextValues = {isAdmin,userinfo,loading};
     return (
         <AuthContext.Provider value={contextValues}>
             {props.children}

@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+/backend/avatar
+!avatar/default-avatar.jpg
+*.env
+/backend/codes
+/backend/outputs

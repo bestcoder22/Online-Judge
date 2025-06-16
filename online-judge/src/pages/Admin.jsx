@@ -7,26 +7,26 @@ const Admin = () => {
   const { isAdmin, userinfo } = useContext(AuthContext);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
       <Navbar />
       <div className="max-w-4xl mx-auto p-6">
-        <h2 className="text-3xl font-extrabold text-center text-indigo-600 mb-8">
+        <h2 className="text-3xl font-extrabold text-center text-indigo-600 dark:text-indigo-400 mb-8">
           Welcome to the Admin Dashboard
         </h2>
 
         {!userinfo ? (
-          <div className="text-center py-8 text-gray-700">
+          <div className="text-center py-8 text-gray-700 dark:text-gray-300">
             Please <Link to="/login" className="text-indigo-500 hover:underline">login</Link> to continue!
           </div>
         ) : !isAdmin ? (
-          <div className="text-center py-8 text-red-600 font-semibold">
+          <div className="text-center py-8 text-red-600 dark:text-red-400 font-semibold">
             Sorry, you are not allowed to access this page.
           </div>
         ) : (
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-2xl shadow-lg">
-              <p className="text-center text-xl font-medium text-gray-800">
-                Hello, <span className="text-indigo-600">Admin</span>
+            <div className="bg-white dark:bg-white/5 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-white/10">
+              <p className="text-center text-xl font-medium text-gray-800 dark:text-white">
+                Hello, <span className="text-indigo-600 dark:text-indigo-400">Admin</span>
               </p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-10">

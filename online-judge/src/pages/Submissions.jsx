@@ -128,7 +128,7 @@ const Submissions = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen font-sans">
+    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen font-sans text-gray-900 dark:text-gray-100">
       <Navbar />
 
       <div className="max-w-5xl mx-auto py-8 px-4 space-y-6">
@@ -152,7 +152,7 @@ const Submissions = () => {
                     value={searchTerm}
                     onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                     placeholder="Search..."
-                    className="border border-gray-300 rounded-l-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-black dark:text-white rounded-r-md hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                     autoFocus
                   />
                 </motion.div>
@@ -163,9 +163,11 @@ const Submissions = () => {
                 setSearchOpen(o => !o);
                 if (searchOpen) setSearchTerm("");
               }}
-              className="p-2 bg-white border border-gray-300 rounded-r-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="p-2 bg-white border border-gray-300 rounded-r-md 
+                        hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400
+                        dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700"
             >
-              <Search size={16}/>
+              <Search size={16} className="text-black dark:text-white" />
             </button>
           </div>
 
@@ -173,7 +175,7 @@ const Submissions = () => {
           <div ref={settingsRef} className="relative">
             <button
               onClick={() => setSettingsOpen(o => !o)}
-              className="p-2 bg-white border border-gray-300 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-black dark:text-white rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             >
               <Sliders size={16}/>
             </button>
@@ -186,32 +188,32 @@ const Submissions = () => {
                   exit="exit"
                   variants={panelVariants}
                   transition={{ duration:0.15 }}
-                  className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-md shadow-lg z-10 p-4 space-y-4"
+                  className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-10 p-4 space-y-4"
                 >
                   <button
                     onClick={()=>setSettingsOpen(false)}
-                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                    className="absolute top-2 right-2 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white"
                   ><X size={16}/></button>
 
                   {/* Search & Reset */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search</label>
                     <input
                       type="text"
                       value={searchTerm}
                       onChange={e=>{ setSearchTerm(e.target.value); setCurrentPage(1); }}
                       placeholder="Title / ID / Status"
-                      className="block w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-indigo-400"
+                      className="block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white rounded-md p-2 focus:ring-2 focus:ring-indigo-400"
                     />
                   </div>
 
                   {/* Filter by Tag */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Tag</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Filter by Tag</label>
                     <select
                       value={selectedTag}
                       onChange={e=>{ setSelectedTag(e.target.value); setCurrentPage(1); }}
-                      className="block w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-indigo-400"
+                      className="block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white rounded-md p-2 focus:ring-2 focus:ring-indigo-400"
                     >
                       {tagOptions.map(tag=>(
                         <option key={tag} value={tag}>{tag}</option>
@@ -221,12 +223,12 @@ const Submissions = () => {
 
                   {/* Sort */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sort By</label>
                     <div className="flex space-x-2">
                       <select
                         value={sortField}
                         onChange={e=>{ setSortField(e.target.value); setCurrentPage(1); }}
-                        className="flex-1 border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-indigo-400"
+                        className="flex-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white rounded-md p-2 focus:ring-2 focus:ring-indigo-400"
                       >
                         <option value="date">Date</option>
                         <option value="id">Problem ID</option>
@@ -234,7 +236,7 @@ const Submissions = () => {
                       </select>
                       <button
                         onClick={()=>{ setSortOrder(o=>o==="asc"?"desc":"asc"); setCurrentPage(1); }}
-                        className="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                        className="px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                       >
                         {sortOrder==="asc"?"↑":"↓"}
                       </button>
@@ -243,11 +245,11 @@ const Submissions = () => {
 
                   {/* Items per Page */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Items per Page</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Items per Page</label>
                     <select
                       value={itemsPerPage}
                       onChange={e=>{ setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                      className="block w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-indigo-400"
+                      className="block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white rounded-md p-2 focus:ring-2 focus:ring-indigo-400"
                     >
                       {[5,10,20,50].map(n=>(
                         <option key={n} value={n}>{n}</option>
@@ -263,22 +265,24 @@ const Submissions = () => {
         {/* Submission cards */}
         <div className="space-y-4">
           {paginated.length === 0
-            ? <p className="text-gray-500">No submissions found.</p>
+            ? <p className="text-gray-500 dark:text-gray-400">No submissions found.</p>
             : paginated.map(sub => {
                 const prob = problems[sub.problemid - 1] || {};
                 const tag  = (prob.tag || "UNTAGGED").toUpperCase();
-                let statusColor = "bg-red-100 text-red-700";
-                if (sub.status==="Accepted") statusColor="bg-green-100 text-green-700";
+                let statusColor = "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300";
+                if (sub.status === "Accepted") {
+                  statusColor = "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300";
+                }
 
                 return (
                   <Link key={sub._id} to={`/submissions/${sub._id}`}>
-                    <div className="m-3 cursor-pointer bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-5 grid grid-cols-[3fr_1fr_1fr] items-center gap-4">
+                    <div className="m-3 cursor-pointer bg-white/80 dark:bg-white/10 backdrop-blur-md rounded-2xl shadow-sm hover:shadow-md hover:scale-[1.03] transition-all duration-200 p-5 grid grid-cols-[3fr_1fr_1fr] items-center gap-4">
                       <div className="flex flex-col space-y-1">
-                        <span className="text-xs text-gray-400">Problem ID: {sub.problemid}</span>
-                        <span className="text-lg font-semibold text-gray-800">{prob.title||"Untitled"}</span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500">Problem ID: {sub.problemid}</span>
+                        <span className="text-lg font-semibold text-gray-800 dark:text-white">{prob.title||"Untitled"}</span>
                       </div>
                       <div className="flex justify-center">
-                        <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">{tag}</span>
+                        <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full">{tag}</span>
                       </div>
                       <div className="flex justify-end">
                         <span className={`px-3 py-1 ${statusColor} text-xs font-semibold rounded-full`}>{sub.status}</span>
@@ -289,28 +293,41 @@ const Submissions = () => {
               })}
         </div>
 
-        {/* Pagination */}
         <div className="flex justify-center items-center space-x-2 mt-6 flex-wrap">
           <button
-            onClick={()=>goToPage(currentPage-1)}
-            disabled={currentPage===1}
-            className={`px-3 py-1 rounded-md border ${currentPage===1? "text-gray-400 border-gray-200 cursor-not-allowed":"text-gray-700 border-gray-300 hover:bg-gray-100"}`}
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`px-3 py-1 rounded-md border ${
+              currentPage === 1
+                ? "text-gray-400 border-gray-200 dark:text-gray-500 dark:border-gray-600 cursor-not-allowed"
+                : "text-gray-700 border-gray-300 hover:bg-gray-100 dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-700"
+            }`}
           >
             « Prev
           </button>
-          {Array.from({length: totalPages},(_,i)=>i+1).map(pg=>(
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(pg => (
             <button
               key={pg}
-              onClick={()=>goToPage(pg)}
-              className={`px-3 py-1 rounded-md border ${pg===currentPage? "bg-indigo-500 text-white border-indigo-500":"text-gray-700 border-gray-300 hover:bg-gray-100"}`}
+              onClick={() => goToPage(pg)}
+              className={`px-3 py-1 rounded-md border ${
+                pg === currentPage
+                  ? "bg-indigo-500 text-white border-indigo-500"
+                  : "text-gray-700 border-gray-300 hover:bg-gray-100 dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-700"
+              }`}
             >
               {pg}
             </button>
           ))}
+
           <button
-            onClick={()=>goToPage(currentPage+1)}
-            disabled={currentPage===totalPages}
-            className={`px-3 py-1 rounded-md border ${currentPage===totalPages? "text-gray-400 border-gray-200 cursor-not-allowed":"text-gray-700 border-gray-300 hover:bg-gray-100"}`}
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-3 py-1 rounded-md border ${
+              currentPage === totalPages
+                ? "text-gray-400 border-gray-200 dark:text-gray-500 dark:border-gray-600 cursor-not-allowed"
+                : "text-gray-700 border-gray-300 hover:bg-gray-100 dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-700"
+            }`}
           >
             Next »
           </button>
