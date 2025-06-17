@@ -10,6 +10,7 @@
 /backend/codes
 /backend/outputs
 /backend/avatar
+keys
 
 # keep the default.jpg
 !avatar/default-avatar.jpg
