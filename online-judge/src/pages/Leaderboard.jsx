@@ -23,7 +23,7 @@ const Leaderboard = () => {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/leaderboard");
+        const response = await axios.get(import.meta.env.VITE_BACKEND_LEADERBOARD);
         setLeaderboard(response.data.leaderboard || []);
       } catch (error) {
         console.error("Failed to fetch leaderboard:", error);

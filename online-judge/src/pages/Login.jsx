@@ -34,7 +34,7 @@ const Login = () => {
 
   const submit = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/login', user, { withCredentials: true });
+      const response = await axios.post(import.meta.env.VITE_BACKEND_LOGIN, user, { withCredentials: true });
       if (response.data.success) {
         toast.success(response.data.message || 'Login successful!');
         // Navigate after a short delay to allow the toast to show

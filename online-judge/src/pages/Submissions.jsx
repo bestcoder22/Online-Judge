@@ -37,7 +37,7 @@ const Submissions = () => {
 
   useEffect(() => {
     (async () => {
-      const res = await axios.get("http://localhost:5000/problems");
+      const res = await axios.get(import.meta.env.VITE_BACKEND_PROBLEMS);
       setProblems(res.data.problems || []);
     })();
   }, []);

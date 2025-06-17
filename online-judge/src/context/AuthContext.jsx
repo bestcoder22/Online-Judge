@@ -10,10 +10,10 @@ export const AuthContextProvider = (props) => {
     useEffect(() => {
         const checkadmin = async () => {
             try{
-                const response = await axios.get("http://localhost:5000/me", {withCredentials:true});
+                const response = await axios.get(import.meta.env.VITE_BACKEND_ME, {withCredentials:true});
                 if(response.data.success){
                     const userid=response.data.id
-                    const response_user = await axios.post("http://localhost:5000/getuser", {userid} , {withCredentials:true});
+                    const response_user = await axios.post(import.meta.env.VITE_BACKEND_GETUSER, {userid} , {withCredentials:true});
                     setUserinfo(response_user.data.user);
                     if(response.data.role === "admin")
                         setisAdmin(true);

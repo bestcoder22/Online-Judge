@@ -47,7 +47,9 @@ const Footer = () => {
 
           {/* Email */}
           <a
-            href="mailto:amrutkarsoham22@gmail.com"
+            href="https://mail.google.com/mail/?view=cm&to=amrutkarsoham22@gmail.com"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hover:text-red-400 transition-colors"
             aria-label="Email"
           >

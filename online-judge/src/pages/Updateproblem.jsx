@@ -16,7 +16,7 @@ const Updateproblem = () => {
 
   useEffect(() => {
     const getproblems = async () => {
-      const response = await axios.get("http://localhost:5000/problems");
+      const response = await axios.get(import.meta.env.VITE_BACKEND_PROBLEMS);
       setproblems(response.data.problems);
     };
     getproblems();
@@ -64,11 +64,11 @@ const Updateproblem = () => {
 
   const handledelete = async (problemid) => {
     const response = await axios.post(
-      "http://localhost:5000/admin/deleteproblem",
+      import.meta.env.VITE_BACKEND_DELETEPROBLEM,
       { problemid },
       {withCredentials:true}
     );
-    const response_testcases = await axios.post("http://localhost:5000/admin/deletetestcases",{ problemid }, {withCredentials:true});
+    const response_testcases = await axios.post(import.meta.env.VITE_BACKEND_DELETETESTCASES,{ problemid }, {withCredentials:true});
     if (response.data.success && response_testcases.data.success) {
       toast.success(`${response.data.message}. ${response_testcases.data.message}`);
       setTimeout(() => {
@@ -80,7 +80,7 @@ const Updateproblem = () => {
 
   const handleEdit = async (problem) => {
     setSelectedProblem(problem);
-    const response = await axios.post("http://localhost:5000/gettestcase", problem , {withCredentials:true});
+    const response = await axios.post(import.meta.env.VITE_BACKEND_GETTESTCASE, problem , {withCredentials:true});
     setselectedTestcase(response.data.testcase); 
     
   };
@@ -97,7 +97,7 @@ const Updateproblem = () => {
         const inputfile = e.target.files[0];
         data_input.append('name',inputfile.name);
         data_input.append('file',inputfile);
-        const response_input = await axios.post('http://localhost:5000/admin/getdetails_input', data_input , {withCredentials:true});
+        const response_input = await axios.post(import.meta.env.VITE_BACKEND_GETINPUT, data_input , {withCredentials:true});
         setselectedTestcase((prev) => ({...prev, input:response_input.data.input}));
     }
     if(e.target.name === "outputFile"){
@@ -105,7 +105,7 @@ const Updateproblem = () => {
         const outputfile=e.target.files[0]
         data_output.append('name', outputfile.name);
         data_output.append('file', outputfile);
-        const response_output = await axios.post('http://localhost:5000/admin/getdetails_output', data_output , {withCredentials:true});
+        const response_output = await axios.post(import.meta.env.VITE_BACKEND_GETOUTPUT, data_output , {withCredentials:true});
         setselectedTestcase((prev) => ({...prev, expectedOutput:response_output.data.output}));
     }
   };
@@ -138,10 +138,10 @@ const Updateproblem = () => {
         return;
     }
     if(selectedProblem!=null){
-        await axios.post("http://localhost:5000/admin/updateproblem", selectedProblem , {withCredentials:true});
+        await axios.post(import.meta.env.VITE_BACKEND_UPDATEPROBLEM, selectedProblem , {withCredentials:true});
     }
     if(selectedTestcase!=null){
-        await axios.post("http://localhost:5000/admin/updatetestcase", selectedTestcase , {withCredentials:true});
+        await axios.post(import.meta.env.VITE_BACKEND_UPDATETESTCASE, selectedTestcase , {withCredentials:true});
     }
     toast.success("Details Updated Successfully!");
     setTimeout(() => {

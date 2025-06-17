@@ -72,7 +72,7 @@ int main() {
   useEffect(() => {
     const getProblem = async () => {
       try {
-        const response = await axios.post("http://localhost:5000/getproblem", {
+        const response = await axios.post(import.meta.env.VITE_BACKEND_GETPROBLEM, {
           problemid,
         });
         setProblem(response.data.problem);
@@ -100,7 +100,7 @@ int main() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/run",
+        import.meta.env.VITE_BACKEND_RUN,
         {
           problemid,
           code,
@@ -112,7 +112,7 @@ int main() {
       if (res.data.status === "success") {
         console.log("Hi");
         const response_complexity = await axios.post(
-          "http://localhost:5000/get_complexity",
+          import.meta.env.VITE_BACKEND_GETCOMPLEXITY,
           { language, code },
           { withCredentials: true }
         );
@@ -139,7 +139,7 @@ int main() {
         const errorType = res.data.errorType || "Error";
         const message = res.data.message || "An unknown error occurred.";
         const response = await axios.post(
-          "http://localhost:5000/errorsuggestion",
+          import.meta.env.VITE_BACKEND_ERRORSUGGESTION,
           { language, code, problem, errorType, message },
           { withCredentials: true }
         );
@@ -194,7 +194,7 @@ int main() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/run",
+        import.meta.env.VITE_BACKEND_RUN,
         {
           problemid,
           code,
@@ -244,7 +244,7 @@ int main() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/run",
+        import.meta.env.VITE_BACKEND_RUN,
         {
           problemid,
           code,
@@ -316,7 +316,7 @@ int main() {
           code: code,
           status: errorData.errorType,
         };
-        await axios.post("http://localhost:5000/submission", data, {
+        await axios.post(import.meta.env.VITE_BACKEND_SUBMISSION, data, {
           withCredentials: true,
         });
       }
@@ -331,7 +331,7 @@ int main() {
             space_complexity: spacecomplexity,
           };
 
-          await axios.post("http://localhost:5000/submission", data, {
+          await axios.post(import.meta.env.VITE_BACKEND_SUBMISSION, data, {
             withCredentials: true,
           });
         } else {
@@ -341,7 +341,7 @@ int main() {
             code: code,
             status: "Wrong Answer",
           };
-          await axios.post("http://localhost:5000/submission", data, {
+          await axios.post(import.meta.env.VITE_BACKEND_SUBMISSION, data, {
             withCredentials: true,
           });
         }
@@ -355,7 +355,7 @@ int main() {
       language: language,
       code: code,
     };
-    const response = await axios.post("http://localhost:5000/smartfix", data, {
+    const response = await axios.post(import.meta.env.VITE_BACKEND_SMARTFIX, data, {
       withCredentials: true,
     });
     if (response.data.success) {
@@ -380,7 +380,7 @@ int main() {
       problem: problem,
     };
     const response = await axios.post(
-      "http://localhost:5000/codereview",
+      import.meta.env.VITE_BACKEND_CODEREVIEW,
       data,
       { withCredentials: true }
     );

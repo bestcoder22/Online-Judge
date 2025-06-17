@@ -23,7 +23,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/logout",
+        import.meta.env.VITE_BACKEND_LOGOUT,
         {},
         { withCredentials: true }
       );
@@ -98,7 +98,7 @@ const Navbar = () => {
               </button>
               <Link to="/profile">
                 <img
-                  src={`http://localhost:5000${userinfo.avatar_path}`}
+                  src={`http://13.233.47.234:5000${userinfo.avatar_path}`}
                   alt="Profile"
                   className="w-10 h-10 rounded-full hover:shadow-xl hover:scale-105 transition duration-200 cursor-pointer"
                 />
