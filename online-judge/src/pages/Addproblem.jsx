@@ -86,7 +86,7 @@ const AddProblem = () => {
     data_input.append("name", inputFile.name);
     data_input.append("file", inputFile);
     const response_input = await axios.post(
-      import.meta.env.VITE_BACKEND_GETINPUT,
+      `${import.meta.env.VITE_BACKEND_URL}/admin/getdetails_input`,
       data_input,
       { withCredentials: true }
     );
@@ -95,13 +95,13 @@ const AddProblem = () => {
     data_output.append("name", outputFile.name);
     data_output.append("file", outputFile);
     const response_output = await axios.post(
-      import.meta.env.VITE_BACKEND_GETOUTPUT,
+      `${import.meta.env.VITE_BACKEND_URL}/admin/getdetails_output`,
       data_output,
       { withCredentials: true }
     );
 
     const response_testcase = await axios.post(
-      import.meta.env.VITE_BACKEND_TESTCASE,
+      `${import.meta.env.VITE_BACKEND_URL}/admin/testcase`,
       { response_input, response_output },
       { withCredentials: true }
     );
@@ -113,7 +113,7 @@ const AddProblem = () => {
     };
 
     const response_problem = await axios.post(
-      import.meta.env.VITE_BACKEND_ADDPROBLEM,
+      `${import.meta.env.VITE_BACKEND_URL}/admin/addproblem`,
       finalProblem,
       { withCredentials: true }
     );

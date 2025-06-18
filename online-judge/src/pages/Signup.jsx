@@ -35,7 +35,7 @@ const Signup = () => {
 
   const submit = async () => {
     try {
-      const response = await axios.post(import.meta.env.VITE_BACKEND_SIGNUP, user);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/signup`, user);
       if (response.data.success) {
         toast.success(response.data.message || 'Signup successful!');
         setTimeout(() => {

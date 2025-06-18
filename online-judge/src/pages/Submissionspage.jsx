@@ -30,7 +30,7 @@ const Submissionspage = () => {
       if (!submission) return;
       try {
         const { problemid } = submission;
-        const res = await axios.post(import.meta.env.VITE_BACKEND_GETPROBLEM, {
+        const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/getproblem`, {
           problemid,
         });
         setProblem(res.data.problem || null);

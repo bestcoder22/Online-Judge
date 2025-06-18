@@ -27,7 +27,7 @@ const Profile = () => {
   useEffect(() => {
     if (!userinfo) return;
     setLoading(true);
-    axios.post(import.meta.env.VITE_BACKEND_GETSUBMISSIONS, { userid: userinfo._id }, { withCredentials: true })
+    axios.post(`${import.meta.env.VITE_BACKEND_URL}/getsubmissions`, { userid: userinfo._id }, { withCredentials: true })
       .then(res => setSubmissions(res.data.submissions || []))
       .catch(() => toast.error('Failed to load submissions'))
       .finally(() => setLoading(false));
@@ -35,7 +35,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (!userinfo) return;
-    axios.get(import.meta.env.VITE_BACKEND_PROBLEMS)
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/problems`)
       .then(res => setProblems(res.data.problems || []))
       .catch(() => toast.error('Failed to load problems'));
   }, [userinfo]);
@@ -66,7 +66,7 @@ const Profile = () => {
     formData.append('avatar', file);
     formData.append('userId', userinfo._id);
     try {
-      const res = await axios.post(import.meta.env.VITE_BACKEND_AVATAR, formData, { withCredentials: true });
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/profile/avatar`, formData, { withCredentials: true });
       if (res.data.success) {
         toast.success('Avatar updated!');
         setTimeout(() => window.location.reload(), 1000);
@@ -126,7 +126,7 @@ useEffect(() => {
         <div className="relative">
           <img
             className="w-28 h-28 rounded-full object-cover shadow-lg ring-2 ring-white/40 dark:ring-white/20"
-            src={`http://13.233.47.234:5000${userinfo?.avatar_path}`}
+            src={`${import.meta.env.VITE_BACKEND_URL}${userinfo?.avatar_path}`}
             alt="Profile"
           />
           <div
