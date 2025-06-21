@@ -10,8 +10,9 @@ export const login = async (req,res) => {
         if(req.body.password === user.password){
             const token = jwt.sign({id : user._id , role : user.role}, process.env.JWT_SECRET);
             res.cookie("access_token",token,{
-                secure: false,         // only send over HTTPS
-                sameSite: "Lax",     // required if frontend & backend are on different domains
+                httpOnly: true,
+                secure: true,         // only send over HTTPS
+                sameSite: "None",     // required if frontend & backend are on different domains
                 maxAge: 7 * 24 * 60 * 60 * 1000, // optional: 7 days
             })
             return res.status(200).json({success:true , message:"Successfully Logged In"});

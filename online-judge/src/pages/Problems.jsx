@@ -28,6 +28,8 @@ const Problems = () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/problems`);
         setProblems(response.data.problems || []);
+        const url = `${import.meta.env.VITE_BACKEND_URL}/problems`;
+        console.log("📡 Making request to:", url);
       } catch (error) {
         console.error("Error fetching problems:", error);
       }

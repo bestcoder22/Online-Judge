@@ -12,6 +12,7 @@ const headingVariants = {
   hidden: { opacity: 0, y: -20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
 };
+console.log("✅ BACKEND_URL from env:", import.meta.env.VITE_BACKEND_URL);
 
 // Variants for container to stagger children animations
 const containerVariants = {

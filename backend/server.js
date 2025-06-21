@@ -21,17 +21,10 @@ app.use(
 DBConnection();
 
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // allow requests with no origin (e.g. curl, Postman)
-      if (!origin) return callback(null, true);
-      // reflect the request origin back in the header
-      callback(null, origin);
-    },
-    credentials: true
-  })
-);
+app.use(cors({
+    origin:["https://www.codeiq.space","https://codeiq.space"],
+    credentials:true
+}));
 
 
 
